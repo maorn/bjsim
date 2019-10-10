@@ -6,7 +6,7 @@ Created on Oct 8, 2019
 import pandas as pd
 ONE_SET = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
-''' taken from https://www.blackjackapprenticeship.com/blackjack-strategy-charts/ 
+''' taken from https://www.blackjackapprenticeship.com/blackjack-strategy-charts/
     made small modifications like double on 5,5 when we should double on 10
 '''
 STANDARD_LOGIC = pd.DataFrame(
@@ -26,7 +26,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'H',
@@ -63,7 +63,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'H',
@@ -101,7 +101,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'D',
@@ -139,7 +139,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'D',
            'A,3': 'D',
            'A,4': 'D',
@@ -177,7 +177,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'D',
            'A,3': 'D',
            'A,4': 'D',
@@ -215,7 +215,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'H',
@@ -253,7 +253,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'H',
@@ -291,7 +291,7 @@ STANDARD_LOGIC = pd.DataFrame(
            '18': 'S',
            '19': 'S',
            '20': 'S',
-           '21': 'S',           
+           '21': 'S',
            'A,2': 'H',
            'A,3': 'H',
            'A,4': 'H',
@@ -329,7 +329,7 @@ STANDARD_LOGIC = pd.DataFrame(
             '18': 'S',
             '19': 'S',
             '20': 'S',
-            '21': 'S',            
+            '21': 'S',
             'A,2': 'H',
             'A,3': 'H',
             'A,4': 'H',
