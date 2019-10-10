@@ -3,9 +3,9 @@ Created on Oct 8, 2019
 
 @author: maor
 '''
-from common.cards import count_hand, BjDeck, dealer_hand, final_money, init_game
-import pandas as pd
-from common.globals import STANDARD_LOGIC
+from common.cards import count_hand, BjDeck
+
+from common.game import final_money, play_game
 
 
 def test_counts():
@@ -18,11 +18,10 @@ def test_counts():
 
 def test_money():
     ret = final_money([16, 17, 18, 19, 20, 21, 22, 25], 18, 5)
-    print(ret)
+    assert sum(ret) == -5
 
 
-def test_init_game():
-    deck = BjDeck(8)
-    player, dealer = init_game(3, deck)
-    print(player, dealer)
-    print(STANDARD_LOGIC)
+def test_game():
+    b = BjDeck(6)
+    a, b, c = play_game(3, b, 100)
+    print(a, b, c)
