@@ -30,9 +30,16 @@ def count_hand(cards):
 
 class BjDeck:
     def __init__(self, decks: int=1):
-        self.deck = ONE_SET * decks
+        self.deck = ONE_SET * 4 * decks
         random.shuffle(self.deck)
         self.cur_card = 0
+        self.resuffle_at = random.randint(50, 75) / 100 * len(self.deck)
+
+    def start_game(self):
+        if self.cur_card > self.resuffle_at:
+            random.shuffle(self.deck)
+            self.cur_card = 0
+            self.resuffle_at = random.randint(50, 75) / 100 * len(self.deck)
 
     def deal(self):
         card = self.deck[self.cur_card]

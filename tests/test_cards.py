@@ -16,12 +16,7 @@ def test_counts():
     assert count_hand([1, 1]) == 12
 
 
-def test_money():
-    ret = final_money([16, 17, 18, 19, 20, 21, 22, 25], 18, 5)
-    assert sum(ret) == -5
-
-
 def test_game():
     b = BjDeck(6)
-    a, b, c = play_game(3, b, 100)
+    a, b, c = play_game(b, [100])
     print(a, b, c)

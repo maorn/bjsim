@@ -4,7 +4,7 @@ Created on Oct 8, 2019
 @author: maor
 '''
 import pandas as pd
-from common.cards import BjDeck
+from common.cards import BjDeck, count_hand
 from common.game import dealer_hand
 
 
@@ -17,7 +17,8 @@ def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
         deck = BjDeck(decks)
         start_hand = deck.deal()
         dealer = [start_hand]
-        count = dealer_hand(dealer, deck)
+        d_cards = dealer_hand(dealer, deck)
+        count = count_hand(d_cards)
         if count > 21:
             count = 'F'
         dealer_stats[str(start_hand)][str(count)] = dealer_stats[str(start_hand)][str(count)] + 1.

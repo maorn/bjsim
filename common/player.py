@@ -20,7 +20,7 @@ def player_standard_logic(cards, dealer):
         dealer_str = str(dealer[0])
     if len(cards) == 2:
         if cards[0] == cards[1]:
-            if cards[0] == 'A':
+            if cards[0] == 1:
                 index = 'A,A'
             else:
                 index = f'{cards[0]},{cards[1]}'
@@ -34,5 +34,7 @@ def player_standard_logic(cards, dealer):
     else:
         count = count_hand(cards)
         index = str(count)
-
-    return STANDARD_LOGIC.loc[index, dealer_str]
+    try:
+        return STANDARD_LOGIC.loc[index, dealer_str]
+    except BaseException:
+        print(cards)
