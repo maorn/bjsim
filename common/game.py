@@ -30,16 +30,21 @@ def final_money(final_hands, d_cards):
         ret = []
         d_hand = count_hand(d_cards)
         for hand in final_hands:
-            if hand.count > 21 or (hand.count < d_hand and d_hand < 22):
+            # player has over 21  or
+            # player has less than the dealer or
+            # dealer has 21 in two cards and the player don't have 21 in two cards
+            if (hand.count > 21 or (hand.count < d_hand and d_hand < 22)) or (
+                    d_hand == 21 and len(d_cards) == 2 and len(hand.cards) > 2):
                 ret.append(-hand.bet)
+            # player has blackjack in two cards and dealer don't have 21 in two cards
             elif hand.count == 21 and len(hand.cards) == 2 and (d_hand != 21 or len(d_cards) > 2):
                 ret.append(hand.bet * 1.5)
+            # dealer has more than 21 or the player has more than the dealer
             elif d_hand > 21 or hand.count > d_hand:
                 ret.append(hand.bet)
-            elif d_hand == 21 and len(d_cards == 2) and len(hand.cards) > 2:
-                ret.append(-hand.bet)
+            # same hand for dealer and player
             elif hand.count == d_hand:
-                ret.append(0.)
+                ret.append(0)
             else:
                 print(1)
         return ret
@@ -48,29 +53,28 @@ def final_money(final_hands, d_cards):
 
 
 def play_double(hand, bet, deck):
-    currHand = OneHand(hand, bet * 2)
-    currHand.hit(deck)
-    return currHand
+    curr_hand = OneHand(hand, bet * 2)
+    curr_hand.hit(deck)
+    return curr_hand
 
 
 def play_hit(hand, bet, dealer, deck):
-    currHand = OneHand(hand, bet)
-    action = player_standard_logic(currHand.cards, dealer)
+    curr_hand = OneHand(hand, bet)
+    action = player_standard_logic(curr_hand.cards, dealer)
     while action != 'S':
-        currHand.hit(deck)
-        if currHand.count > 21:
+        curr_hand.hit(deck)
+        if curr_hand.count > 21:
             break
         else:
-            action = player_standard_logic(currHand.cards, dealer)
-    return currHand
+            action = player_standard_logic(curr_hand.cards, dealer)
+    return curr_hand
 
 
 def play_hand(hand, dealer, deck, bet):
-    #    count = count_hand(hand)
     action = player_standard_logic(hand, dealer)
     if action == 'S':
-        currHand = OneHand(hand, bet)
-        return [currHand]
+        curr_hand = OneHand(hand, bet)
+        return [curr_hand]
     if action == 'D':
         return [play_double(hand, bet, deck)]
     if action == 'H':
@@ -80,23 +84,23 @@ def play_hand(hand, dealer, deck, bet):
         final_hand = []
         # ace means split and one card only.
         if hand[0] == 1:
-            firstHand = OneHand([hand.pop(), deck.deal()], bet)
-            final_hand.append(firstHand)
-            secondHand = OneHand([hand.pop(), deck.deal()], bet)
-            final_hand.append(secondHand)
+            first_h = OneHand([hand.pop(), deck.deal()], bet)
+            final_hand.append(first_h)
+            second_h = OneHand([hand.pop(), deck.deal()], bet)
+            final_hand.append(second_h)
             return final_hand
         while hand:
-            currHand = [hand.pop(), deck.deal()]
-            action = player_standard_logic(currHand, dealer)
+            curr_hand = [hand.pop(), deck.deal()]
+            action = player_standard_logic(curr_hand, dealer)
             if action == 'S':
-                final_hand.append(OneHand(currHand, bet))
+                final_hand.append(OneHand(curr_hand, bet))
             elif action == 'D':
-                final_hand.append(play_double(currHand, bet, deck))
+                final_hand.append(play_double(curr_hand, bet, deck))
             elif action == 'Y':
-                hand.append(currHand.pop())
-                hand.append(currHand.pop())
+                hand.append(curr_hand.pop())
+                hand.append(curr_hand.pop())
             elif action == 'H':
-                final_hand.append(play_hit(currHand, bet, dealer, deck))
+                final_hand.append(play_hit(curr_hand, bet, dealer, deck))
             else:
                 print("action not understood ", action)
         return final_hand
@@ -108,8 +112,6 @@ def play_game(deck, bets):
     final_hand = []
     for player, bet in zip(players, bets):
         curr_hand = play_hand(player, dealer, deck, bet)
-        if curr_hand is None:
-            print(1)
         final_hand.extend(curr_hand)
     d_hand = dealer_hand(dealer, deck)
     return final_hand, d_hand, final_money(final_hand, d_hand)
@@ -151,7 +153,9 @@ class OneHand:
 def main():
     b = BjDeck(6)
     start_money = 10000
-    for i in range(1000):
+    end_money = start_money
+    games = 1000
+    for i in range(games):
         print(i)
         b.start_game()
         final_hand, d_hand, return_money = play_game(b, [100, 100, 100])
@@ -163,9 +167,10 @@ def main():
             print(hand.cards)
         print("dealer", d_hand)
         print(return_money)
-        start_money = start_money + sum(return_money)
-        print("money", start_money)
-    print(start_money)
+        end_money = end_money + sum(return_money)
+        print("money", end_money)
+    print(end_money)
+    print("average win/lost per game: ", (end_money - start_money) / games)
 
 
 if __name__ == '__main__':
