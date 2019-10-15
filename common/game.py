@@ -152,13 +152,13 @@ class OneHand:
 
 def main():
     b = BjDeck(6)
-    start_money = 10000
+    start_money = 0
     end_money = start_money
-    games = 1000
+    games = 10000
     for i in range(games):
         print(i)
         b.start_game()
-        final_hand, d_hand, return_money = play_game(b, [100, 100, 100])
+        final_hand, d_hand, return_money = play_game(b, [100, 100, 100, 100, 100, 100])
         if final_hand is None or return_money is None:
             print(2)
         if len(final_hand) < 3 or len(return_money) < 3:

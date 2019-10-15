@@ -24,6 +24,9 @@ def player_stats(games=1000000, decks=6, save_fn=None):
                 count = 'F'
             else:
                 count = str(hand.count)
+            if count == '11':
+                print(hand.cards, dealer)
+
             if player_stats.get(hand_index):
                 if player_stats[hand_index].get(count):
                     player_stats[hand_index][count] = player_stats[hand_index][count] + 1
