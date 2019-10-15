@@ -7,17 +7,13 @@ from common.cards import count_hand
 from common.globals import STANDARD_LOGIC
 
 
-def player_standard_logic(cards, dealer):
+def convert_hand_to_index(cards):
     ''' possible outcomes:
-        'Y' = split
-        'D' = double
-        'S' = Stand
-        'H' = Hit
+    'Y' = split
+    'D' = double
+    'S' = Stand
+    'H' = Hit
     '''
-    if dealer[0] == 1:
-        dealer_str = 'A'
-    else:
-        dealer_str = str(dealer[0])
     if len(cards) == 2:
         if cards[0] == cards[1]:
             if cards[0] == 1:
@@ -34,6 +30,16 @@ def player_standard_logic(cards, dealer):
     else:
         count = count_hand(cards)
         index = str(count)
+    return index
+
+
+def player_standard_logic(cards, dealer):
+
+    if dealer[0] == 1:
+        dealer_str = 'A'
+    else:
+        dealer_str = str(dealer[0])
+    index = convert_hand_to_index(cards)
     try:
         return STANDARD_LOGIC.loc[index, dealer_str]
     except BaseException:

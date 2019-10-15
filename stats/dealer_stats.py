@@ -12,9 +12,9 @@ def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
     dealer_stats = {}
     for i in range(1, 11):
         dealer_stats[str(i)] = {'17': 0, '18': 0, '19': 0, '20': 0, '21': 0, 'F': 0}
-
+    deck = BjDeck(decks)
     for _ in range(games):
-        deck = BjDeck(decks)
+        deck.start_game()
         start_hand = deck.deal()
         dealer = [start_hand]
         d_cards = dealer_hand(dealer, deck)
