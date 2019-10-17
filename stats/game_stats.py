@@ -9,6 +9,15 @@ from common.game import dealer_hand, play_hand, final_money
 from common.player import convert_hand_to_index
 
 
+def get_percents(old_row):
+    row = old_row.copy()
+    total = row['win'] + row['lost'] + row['equal']
+    row['win'] = row['win'] / total
+    row['lost'] = row['lost'] / total
+    row['equal'] = row['equal'] / total
+    return row
+
+
 def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
     dealer_stats = {}
     for i in range(1, 11):
@@ -88,18 +97,18 @@ def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
             else:
                 end_game = 'equal'
 
-            hand_index_dealer = (hand_index, dealer_index)
-            if player_stats.get(hand_index_dealer):
-                player_stats[hand_index_dealer][end_game] = player_stats[hand_index_dealer][end_game] + 1
+            index = f'{hand_index}_{dealer_index}'
+            if player_stats.get(index):
+                player_stats[index][end_game] = player_stats[index][end_game] + 1
             else:
-                player_stats[hand_index_dealer] = {'win': 0, 'lost': 0, 'equal': 0}
-                player_stats[hand_index_dealer][end_game] = 1
+                player_stats[index] = {'win': 0, 'lost': 0, 'equal': 0,
+                                       'player_hand': hand_index,
+                                       'dealer': dealer_index}
+                player_stats[index][end_game] = 1
 
     raw_count = pd.DataFrame(player_stats)
-    print(raw_count.T)
 
-    total = raw_count / raw_count.sum(axis=0)
-    print(total.T)
+    total = raw_count.apply(get_percents)
     if save_fn is not None:
         raw_count.to_csv(save_fn + 'count.csv')
         total.to_csv(save_fn + 'percent.csv')
@@ -108,7 +117,8 @@ def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
 
 def main():
 
-    player_win_rates_for_start_hands(10000)
+    raw_count, total = player_win_rates_for_start_hands(10000)
+    return raw_count, total
 
 
 if __name__ == '__main__':
