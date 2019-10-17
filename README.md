@@ -1,4 +1,4 @@
-# blackjack_simulator
+# Blackjack simulator
 blackjack playing simulator 
 
 general playing and rules are here: 
