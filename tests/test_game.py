@@ -1,6 +1,5 @@
-
-from common.game import play_hand
-from common.cards import BjDeck
+from bjsim.common.cards import BjDeck
+from bjsim.common.game import play_hand
 
 
 def test_game():

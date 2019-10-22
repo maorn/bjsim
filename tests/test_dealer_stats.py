@@ -3,7 +3,7 @@ Created on Oct 10, 2019
 
 @author: maor
 '''
-from stats.dealer_stats import dealer_stats_for_given_hand
+from bjsim.common.game_stats import dealer_stats_for_given_hand
 
 
 def test_dealer_stats():

@@ -3,9 +3,8 @@ Created on Oct 8, 2019
 
 @author: maor
 '''
-from common.cards import count_hand, BjDeck
-
-from common.game import final_money, play_game
+from bjsim.common.cards import count_hand, BjDeck
+from bjsim.common.game import play_game
 
 
 def test_counts():

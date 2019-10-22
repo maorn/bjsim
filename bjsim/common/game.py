@@ -3,8 +3,9 @@ Created on Oct 10, 2019
 
 @author: maor
 '''
-from common.cards import count_hand, BjDeck
-from common.player import player_standard_logic
+from bjsim.common.cards import count_hand, BjDeck
+from bjsim.common.player import player_standard_logic
+from bjsim.common.globals import STANDARD_LOGIC
 
 
 def init_game(number_of_players, deck):
@@ -60,18 +61,18 @@ def play_double(hand, bet, deck):
 
 def play_hit(hand, bet, dealer, deck):
     curr_hand = OneHand(hand, bet)
-    action = player_standard_logic(curr_hand.cards, dealer)
+    action = player_standard_logic(curr_hand.cards, dealer, STANDARD_LOGIC)
     while action != 'S':
         curr_hand.hit(deck)
         if curr_hand.count > 21:
             break
         else:
-            action = player_standard_logic(curr_hand.cards, dealer)
+            action = player_standard_logic(curr_hand.cards, dealer, STANDARD_LOGIC)
     return curr_hand
 
 
 def play_hand(hand, dealer, deck, bet):
-    action = player_standard_logic(hand, dealer)
+    action = player_standard_logic(hand, dealer, STANDARD_LOGIC)
     if action == 'S':
         curr_hand = OneHand(hand, bet)
         return [curr_hand]
@@ -91,7 +92,7 @@ def play_hand(hand, dealer, deck, bet):
             return final_hand
         while hand:
             curr_hand = [hand.pop(), deck.deal()]
-            action = player_standard_logic(curr_hand, dealer)
+            action = player_standard_logic(curr_hand, dealer, STANDARD_LOGIC)
             if action == 'S':
                 final_hand.append(OneHand(curr_hand, bet))
             elif action == 'D':

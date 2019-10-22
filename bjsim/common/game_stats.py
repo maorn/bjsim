@@ -4,9 +4,9 @@ Created on Oct 8, 2019
 @author: maor
 '''
 import pandas as pd
-from common.cards import BjDeck, count_hand
-from common.game import dealer_hand, play_hand, final_money
-from common.player import convert_hand_to_index
+from bjsim.common.cards import BjDeck, count_hand
+from bjsim.common.game import dealer_hand, play_hand, final_money
+from bjsim.common.player import convert_hand_to_index
 
 
 def get_percents(old_row):

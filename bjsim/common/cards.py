@@ -4,7 +4,7 @@ Created on Oct 7, 2019
 @author: maor
 '''
 import random
-from common.globals import ONE_SET
+from bjsim.common.globals import ONE_SET
 
 
 def count_hand(cards):

@@ -3,8 +3,7 @@ Created on Oct 10, 2019
 
 @author: maor
 '''
-from common.cards import count_hand
-from common.globals import STANDARD_LOGIC
+from bjsim.common.cards import count_hand
 
 
 def convert_hand_to_index(cards):
@@ -33,7 +32,7 @@ def convert_hand_to_index(cards):
     return index
 
 
-def player_standard_logic(cards, dealer):
+def player_standard_logic(cards, dealer, player_logic):
 
     if dealer[0] == 1:
         dealer_str = 'A'
@@ -41,6 +40,6 @@ def player_standard_logic(cards, dealer):
         dealer_str = str(dealer[0])
     index = convert_hand_to_index(cards)
     try:
-        return STANDARD_LOGIC.loc[index, dealer_str]
+        return player_logic.loc[index, dealer_str]
     except BaseException:
         print(cards)
