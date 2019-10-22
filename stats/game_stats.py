@@ -11,14 +11,13 @@ from common.player import convert_hand_to_index
 
 def get_percents(old_row):
     row = old_row.copy()
-    total = row['win'] + row['lost'] + row['equal']
-    row['win'] = row['win'] / total
-    row['lost'] = row['lost'] / total
-    row['equal'] = row['equal'] / total
+    row['win'] = row['win'] / row['total']
+    row['lost'] = row['lost'] / row['total']
+    row['equal'] = row['equal'] / row['total']
     return row
 
 
-def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
+def dealer_stats_for_given_hand(games=1000000, decks=6):
     dealer_stats = {}
     for i in range(1, 11):
         dealer_stats[str(i)] = {'17': 0, '18': 0, '19': 0, '20': 0, '21': 0, 'F': 0}
@@ -33,14 +32,13 @@ def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
             count = 'F'
         dealer_stats[str(start_hand)][str(count)] = dealer_stats[str(start_hand)][str(count)] + 1.
     raw_count = pd.DataFrame(dealer_stats)
+    raw_count.index.name = 'end count'
+    raw_count.columns.name = 'start hand'
     total = raw_count / raw_count.sum(axis=0)
-    if save_fn is not None:
-        raw_count.to_csv(save_fn + 'count.csv')
-        total.to_csv(save_fn + 'percent.csv')
     return raw_count, total
 
 
-def player_stats(games=1000000, decks=6, save_fn=None):
+def player_stats(games=1000000, decks=6):
     player_stats = {}
     deck = BjDeck(decks)
     for _ in range(games):
@@ -65,10 +63,9 @@ def player_stats(games=1000000, decks=6, save_fn=None):
                 player_stats[hand_index][count] = 1
 
     raw_count = pd.DataFrame(player_stats)
+    raw_count.index.name = 'end count'
+    raw_count.columns.name = 'start hand'
     total = raw_count / raw_count.sum(axis=0)
-    if save_fn is not None:
-        raw_count.to_csv(save_fn + 'count.csv')
-        total.to_csv(save_fn + 'percent.csv')
     return raw_count, total
 
 
@@ -96,14 +93,16 @@ def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
             index = f'{hand_index}_{dealer_index}'
             if player_stats.get(index):
                 player_stats[index][end_game] = player_stats[index][end_game] + 1
+                player_stats[index]['total'] = player_stats[index]['total'] + 1
             else:
-                player_stats[index] = {'win': 0, 'lost': 0, 'equal': 0,
+                player_stats[index] = {'win': 0, 'lost': 0, 'equal': 0, 'total': 1,
                                        'player_hand': hand_index,
                                        'dealer': dealer_index}
                 player_stats[index][end_game] = 1
 
     raw_count = pd.DataFrame(player_stats)
-
+    raw_count.index.name = 'Results'
+    raw_count.columns.name = 'Player hand_Dealer hand'
     total = raw_count.apply(get_percents)
     if save_fn is not None:
         raw_count.to_csv(save_fn + 'count.csv')
