@@ -33,9 +33,7 @@ def dealer_stats_for_given_hand(games=1000000, decks=6, save_fn=None):
             count = 'F'
         dealer_stats[str(start_hand)][str(count)] = dealer_stats[str(start_hand)][str(count)] + 1.
     raw_count = pd.DataFrame(dealer_stats)
-    print(raw_count)
     total = raw_count / raw_count.sum(axis=0)
-    print(total)
     if save_fn is not None:
         raw_count.to_csv(save_fn + 'count.csv')
         total.to_csv(save_fn + 'percent.csv')
@@ -67,9 +65,7 @@ def player_stats(games=1000000, decks=6, save_fn=None):
                 player_stats[hand_index][count] = 1
 
     raw_count = pd.DataFrame(player_stats)
-    print(raw_count)
     total = raw_count / raw_count.sum(axis=0)
-    print(total)
     if save_fn is not None:
         raw_count.to_csv(save_fn + 'count.csv')
         total.to_csv(save_fn + 'percent.csv')
