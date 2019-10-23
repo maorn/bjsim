@@ -37,11 +37,17 @@ class BjDeck:
 
     def start_game(self):
         if self.cur_card > self.resuffle_at:
-            random.shuffle(self.deck)
-            self.cur_card = 0
+            self.shuffle()
             self.resuffle_at = random.randint(50, 75) / 100 * len(self.deck)
 
     def deal(self):
         card = self.deck[self.cur_card]
         self.cur_card = self.cur_card + 1
         return card
+
+    def shuffle(self):
+        random.shuffle(self.deck)
+        self.cur_card = 0
+
+    def rewind(self, card_idx):
+        self.cur_card = card_idx
