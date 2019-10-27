@@ -7,9 +7,9 @@ import pandas as pd
 ONE_SET = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
 ''' taken from https://www.blackjackapprenticeship.com/blackjack-strategy-charts/
-made small modifications like double on 5,5 when we should double on 10
+
 '''
-STANDARD_LOGIC = pd.DataFrame(
+WEB_POLICY = pd.DataFrame(
     {'2': {'5': 'H', '6': 'H', '7': 'H', '8': 'H', '9': 'H', '10': 'D', '11': 'D',
            '12': 'H', '13': 'S', '14': 'S', '15': 'S', '16': 'S', '17': 'S',
            '18': 'S', '19': 'S', '20': 'S', '21': 'S',
@@ -99,5 +99,5 @@ STANDARD_LOGIC = pd.DataFrame(
            '6,6': 'H', '7,7': 'H', '8,8': 'Y', '9,9': 'S', '10,10': 'S',
            },
      })
-STANDARD_LOGIC.index.name = 'player_hand'
-STANDARD_LOGIC.columns.name = 'dealer_hand'
+WEB_POLICY.index.name = 'player_hand'
+WEB_POLICY.columns.name = 'dealer_hand'

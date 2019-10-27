@@ -5,11 +5,11 @@ Created on Oct 8, 2019
 '''
 import pandas as pd
 from bjsim.common.cards import BjDeck, count_hand
-from bjsim.common.game import dealer_hand, play_hand, final_money
+from bjsim.common.game import dealer_hand, play_hand, rewards
 from bjsim.common.player import convert_hand_to_index
 
 
-def get_percents(old_row):
+def get_percents(old_row: dict)-> dict:
     row = old_row.copy()
     row['win'] = row['win'] / row['total']
     row['lost'] = row['lost'] / row['total']
@@ -17,7 +17,7 @@ def get_percents(old_row):
     return row
 
 
-def dealer_stats_for_given_hand(games=1000000, decks=6):
+def dealer_stats_for_given_hand(games: int=1000000, decks: int=6) -> tuple:
     dealer_stats = {}
     for i in range(1, 11):
         dealer_stats[str(i)] = {'17': 0, '18': 0, '19': 0, '20': 0, '21': 0, 'F': 0}
@@ -38,8 +38,23 @@ def dealer_stats_for_given_hand(games=1000000, decks=6):
     return raw_count, total
 
 
-def player_stats(games=1000000, decks=6):
-    player_stats = {}
+def fill_stats(hand: list, hand_index: str, p_stats: dict):
+    if hand.count > 21:
+        count = 'F'
+    else:
+        count = str(hand.count)
+    if p_stats.get(hand_index):
+        if p_stats[hand_index].get(count):
+            p_stats[hand_index][count] = p_stats[hand_index][count] + 1
+        else:
+            p_stats[hand_index][count] = 1
+    else:
+        p_stats[hand_index] = {}
+        p_stats[hand_index][count] = 1
+
+
+def player_stats(games: int=1000000, decks: int=6)-> tuple:
+    p_stats = {}
     deck = BjDeck(decks)
     for _ in range(games):
         deck.start_game()
@@ -49,27 +64,16 @@ def player_stats(games=1000000, decks=6):
         hand_index = convert_hand_to_index(hand)
         curr_hand = play_hand(hand, dealer, deck, 1)
         for hand in curr_hand:
-            if hand.count > 21:
-                count = 'F'
-            else:
-                count = str(hand.count)
-            if player_stats.get(hand_index):
-                if player_stats[hand_index].get(count):
-                    player_stats[hand_index][count] = player_stats[hand_index][count] + 1
-                else:
-                    player_stats[hand_index][count] = 1
-            else:
-                player_stats[hand_index] = {}
-                player_stats[hand_index][count] = 1
+            fill_stats(hand, hand_index, p_stats)
 
-    raw_count = pd.DataFrame(player_stats)
+    raw_count = pd.DataFrame(p_stats)
     raw_count.index.name = 'end count'
     raw_count.columns.name = 'start hand'
     total = raw_count / raw_count.sum(axis=0)
     return raw_count, total
 
 
-def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
+def player_win_rates_for_start_hands(games: int=1000000, decks: int=6)-> tuple:
     player_stats = {}
     deck = BjDeck(decks)
     for _ in range(games):
@@ -81,7 +85,7 @@ def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
         hand_index = convert_hand_to_index(hand)
         curr_hand = play_hand(hand, dealer, deck, 1)
         d_cards = dealer_hand(dealer, deck)
-        results = final_money(curr_hand, d_cards)
+        results = rewards(curr_hand, d_cards)
         for result in results:
             if result > 0:
                 end_game = 'win'
@@ -104,9 +108,6 @@ def player_win_rates_for_start_hands(games=1000000, decks=6, save_fn=None):
     raw_count.index.name = 'Results'
     raw_count.columns.name = 'Player hand_Dealer hand'
     total = raw_count.apply(get_percents)
-    if save_fn is not None:
-        raw_count.to_csv(save_fn + 'count.csv')
-        total.to_csv(save_fn + 'percent.csv')
     return raw_count, total
 
 

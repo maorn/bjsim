@@ -3,10 +3,11 @@ Created on Oct 10, 2019
 
 @author: maor
 '''
+import pandas as pd
 from bjsim.common.cards import count_hand
 
 
-def convert_hand_to_index(cards):
+def convert_hand_to_index(cards: list) -> str:
     ''' possible outcomes:
     'Y' = split
     'D' = double
@@ -32,7 +33,7 @@ def convert_hand_to_index(cards):
     return index
 
 
-def player_standard_logic(cards, dealer, player_logic):
+def player_policy(cards: list, dealer: list, policy: pd.DataFrame) -> str:
 
     if dealer[0] == 1:
         dealer_str = 'A'
@@ -40,6 +41,6 @@ def player_standard_logic(cards, dealer, player_logic):
         dealer_str = str(dealer[0])
     index = convert_hand_to_index(cards)
     try:
-        return player_logic.loc[index, dealer_str]
+        return policy.loc[index, dealer_str]
     except BaseException:
         print(cards)

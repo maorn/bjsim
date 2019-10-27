@@ -7,7 +7,7 @@ import random
 from bjsim.common.globals import ONE_SET
 
 
-def count_hand(cards):
+def count_hand(cards: list) -> int:
     count = 0
     # aces need special care
     number_of_aces = 0
@@ -40,7 +40,7 @@ class BjDeck:
             self.shuffle()
             self.resuffle_at = random.randint(50, 75) / 100 * len(self.deck)
 
-    def deal(self):
+    def deal(self)-> int:
         card = self.deck[self.cur_card]
         self.cur_card = self.cur_card + 1
         return card

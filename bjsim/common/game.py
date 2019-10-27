@@ -4,118 +4,8 @@ Created on Oct 10, 2019
 @author: maor
 '''
 from bjsim.common.cards import count_hand, BjDeck
-from bjsim.common.player import player_standard_logic
-from bjsim.common.globals import STANDARD_LOGIC
-
-
-def init_game(number_of_players, deck):
-    players = []
-    for _ in range(number_of_players):
-        players.append([deck.deal()])
-    dealer = [deck.deal()]
-    for player in players:
-        player.append(deck.deal())
-    return players, dealer
-
-
-def dealer_hand(cards, deck):
-    count = count_hand(cards)
-    while count < 17:
-        cards.append(deck.deal())
-        count = count_hand(cards)
-    return cards
-
-
-def final_money(final_hands, d_cards):
-    try:
-        ret = []
-        d_hand = count_hand(d_cards)
-        for hand in final_hands:
-            # player has over 21  or
-            # player has less than the dealer or
-            # dealer has 21 in two cards and the player don't have 21 in two cards
-            if (hand.count > 21 or (hand.count < d_hand and d_hand < 22)) or (
-                    d_hand == 21 and len(d_cards) == 2 and len(hand.cards) > 2):
-                ret.append(-hand.bet)
-            # player has blackjack in two cards and dealer don't have 21 in two cards
-            elif hand.count == 21 and len(hand.cards) == 2 and (d_hand != 21 or len(d_cards) > 2):
-                ret.append(hand.bet * 1.5)
-            # dealer has more than 21 or the player has more than the dealer
-            elif d_hand > 21 or hand.count > d_hand:
-                ret.append(hand.bet)
-            # same hand for dealer and player
-            elif hand.count == d_hand:
-                ret.append(0)
-            else:
-                print(1)
-        return ret
-    except BaseException:
-        print(1)
-
-
-def play_double(hand, bet, deck):
-    curr_hand = OneHand(hand, bet * 2)
-    curr_hand.hit(deck)
-    return curr_hand
-
-
-def play_hit(hand, bet, dealer, deck):
-    curr_hand = OneHand(hand, bet)
-    action = player_standard_logic(curr_hand.cards, dealer, STANDARD_LOGIC)
-    while action != 'S':
-        curr_hand.hit(deck)
-        if curr_hand.count > 21:
-            break
-        else:
-            action = player_standard_logic(curr_hand.cards, dealer, STANDARD_LOGIC)
-    return curr_hand
-
-
-def play_hand(hand, dealer, deck, bet):
-    action = player_standard_logic(hand, dealer, STANDARD_LOGIC)
-    if action == 'S':
-        curr_hand = OneHand(hand, bet)
-        return [curr_hand]
-    if action == 'D':
-        return [play_double(hand, bet, deck)]
-    if action == 'H':
-        return [play_hit(hand, bet, dealer, deck)]
-
-    if action == 'Y':
-        final_hand = []
-        # ace means split and one card only.
-        if hand[0] == 1:
-            first_h = OneHand([hand.pop(), deck.deal()], bet)
-            final_hand.append(first_h)
-            second_h = OneHand([hand.pop(), deck.deal()], bet)
-            final_hand.append(second_h)
-            return final_hand
-        while hand:
-            curr_hand = [hand.pop(), deck.deal()]
-            action = player_standard_logic(curr_hand, dealer, STANDARD_LOGIC)
-            if action == 'S':
-                final_hand.append(OneHand(curr_hand, bet))
-            elif action == 'D':
-                final_hand.append(play_double(curr_hand, bet, deck))
-            elif action == 'Y':
-                hand.append(curr_hand.pop())
-                hand.append(curr_hand.pop())
-            elif action == 'H':
-                final_hand.append(play_hit(curr_hand, bet, dealer, deck))
-            else:
-                print("action not understood ", action)
-        return final_hand
-
-
-def play_game(deck, bets):
-    # deal first card for everyone:
-    players, dealer = init_game(len(bets), deck)
-    final_hand = []
-    for player, bet in zip(players, bets):
-        curr_hand = play_hand(player, dealer, deck, bet)
-        final_hand.extend(curr_hand)
-    d_hand = dealer_hand(dealer, deck)
-    return final_hand, d_hand, final_money(final_hand, d_hand)
+from bjsim.common.player import player_policy
+from bjsim.common.globals import WEB_POLICY
 
 
 class PlayerHand:
@@ -149,6 +39,116 @@ class OneHand:
     def hit(self, deck: BjDeck):
         self.cards.append(deck.deal())
         self.count = count_hand(self.cards)
+
+
+def init_game(number_of_players: int, deck: BjDeck)-> tuple:
+    players = []
+    for _ in range(number_of_players):
+        players.append([deck.deal()])
+    dealer = [deck.deal()]
+    for player in players:
+        player.append(deck.deal())
+    return players, dealer
+
+
+def dealer_hand(cards: list, deck: BjDeck) -> list:
+    count = count_hand(cards)
+    while count < 17:
+        cards.append(deck.deal())
+        count = count_hand(cards)
+    return cards
+
+
+def rewards(final_hands: list, d_cards: list)-> list:
+    try:
+        ret = []
+        d_hand = count_hand(d_cards)
+        for hand in final_hands:
+            # player has over 21  or
+            # player has less than the dealer or
+            # dealer has 21 in two cards and the player don't have 21 in two cards
+            if (hand.count > 21 or (hand.count < d_hand and d_hand < 22)) or (
+                    d_hand == 21 and len(d_cards) == 2 and len(hand.cards) > 2):
+                ret.append(-hand.bet)
+            # player has blackjack in two cards and dealer don't have 21 in two cards
+            elif hand.count == 21 and len(hand.cards) == 2 and (d_hand != 21 or len(d_cards) > 2):
+                ret.append(hand.bet * 1.5)
+            # dealer has more than 21 or the player has more than the dealer
+            elif d_hand > 21 or hand.count > d_hand:
+                ret.append(hand.bet)
+            # same hand for dealer and player
+            elif hand.count == d_hand:
+                ret.append(0)
+            else:
+                print(1)
+        return ret
+    except BaseException:
+        print(1)
+
+
+def play_double(hand: list, bet: float, deck: BjDeck)-> OneHand:
+    curr_hand = OneHand(hand, bet * 2)
+    curr_hand.hit(deck)
+    return curr_hand
+
+
+def play_hit(hand: list, bet: float, dealer: list, deck: BjDeck) -> OneHand:
+    curr_hand = OneHand(hand, bet)
+    action = player_policy(curr_hand.cards, dealer, WEB_POLICY)
+    while action != 'S':
+        curr_hand.hit(deck)
+        if curr_hand.count > 21:
+            break
+        else:
+            action = player_policy(curr_hand.cards, dealer, WEB_POLICY)
+    return curr_hand
+
+
+def play_hand(hand: list, dealer: list, deck: BjDeck, bet: float)-> list:
+    action = player_policy(hand, dealer, WEB_POLICY)
+    if action == 'S':
+        curr_hand = OneHand(hand, bet)
+        return [curr_hand]
+    if action == 'D':
+        return [play_double(hand, bet, deck)]
+    if action == 'H':
+        return [play_hit(hand, bet, dealer, deck)]
+
+    if action == 'Y':
+        final_hand = []
+        # ace means split and one card only.
+        if hand[0] == 1:
+            first_h = OneHand([hand.pop(), deck.deal()], bet)
+            final_hand.append(first_h)
+            second_h = OneHand([hand.pop(), deck.deal()], bet)
+            final_hand.append(second_h)
+            return final_hand
+        while hand:
+            curr_hand = [hand.pop(), deck.deal()]
+            action = player_policy(curr_hand, dealer, WEB_POLICY)
+            if action == 'S':
+                final_hand.append(OneHand(curr_hand, bet))
+            elif action == 'D':
+                final_hand.append(play_double(curr_hand, bet, deck))
+            elif action == 'Y':
+                hand.append(curr_hand.pop())
+                hand.append(curr_hand.pop())
+            elif action == 'H':
+                final_hand.append(play_hit(curr_hand, bet, dealer, deck))
+            else:
+                print("action not understood ", action)
+        return final_hand
+
+
+def play_game(deck, bets):
+    # deal first card for everyone:
+    players, dealer = init_game(len(bets), deck)
+    final_hand = []
+    for player, bet in zip(players, bets):
+        curr_hand = play_hand(player, dealer, deck, bet)
+        final_hand.extend(curr_hand)
+    d_hand = dealer_hand(dealer, deck)
+    return final_hand, d_hand, rewards(final_hand, d_hand)
 
 
 def main():
