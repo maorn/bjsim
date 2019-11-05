@@ -4,7 +4,7 @@ Created on Oct 8, 2019
 @author: maor
 '''
 import pandas as pd
-ONE_SET = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+ONE_DECK = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
 
 ''' taken from https://www.blackjackapprenticeship.com/blackjack-strategy-charts/
 

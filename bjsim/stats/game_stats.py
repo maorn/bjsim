@@ -62,7 +62,7 @@ def player_stats(games: int=1000000, decks: int=6)-> tuple:
         dealer = [deck.deal()]
         hand.append(deck.deal())
         hand_index = convert_hand_to_index(hand)
-        curr_hand = play_hand(hand, dealer, deck, 1)
+        curr_hand = play_hand(hand, dealer[0], deck, 1)
         for hand in curr_hand:
             fill_stats(hand, hand_index, p_stats)
 
@@ -83,7 +83,7 @@ def player_win_rates_for_start_hands(games: int=1000000, decks: int=6)-> tuple:
         dealer_index = str(dealer[0])
         hand.append(deck.deal())
         hand_index = convert_hand_to_index(hand)
-        curr_hand = play_hand(hand, dealer, deck, 1)
+        curr_hand = play_hand(hand, dealer[0], deck, 1)
         d_cards = dealer_hand(dealer, deck)
         results = rewards(curr_hand, d_cards)
         for result in results:

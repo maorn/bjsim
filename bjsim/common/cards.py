@@ -4,7 +4,7 @@ Created on Oct 7, 2019
 @author: maor
 '''
 import random
-from bjsim.common.globals import ONE_SET
+from bjsim.common.globals import ONE_DECK
 
 
 def count_hand(cards: list) -> int:
@@ -30,7 +30,7 @@ def count_hand(cards: list) -> int:
 
 class BjDeck:
     def __init__(self, decks: int=1):
-        self.deck = ONE_SET * 4 * decks
+        self.deck = ONE_DECK * decks
         random.shuffle(self.deck)
         self.cur_card = 0
         self.resuffle_at = random.randint(50, 75) / 100 * len(self.deck)

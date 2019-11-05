@@ -20,9 +20,9 @@ def convert_hand_to_index(cards: list) -> str:
                 index = 'A,A'
             else:
                 index = f'{cards[0]},{cards[1]}'
-        elif cards[0] == 'A':
+        elif cards[0] == 1:
             index = f'A,{cards[1]}'
-        elif cards[1] == 'A':
+        elif cards[1] == 1:
             index = f'A,{cards[0]}'
         else:
             count = count_hand(cards)
@@ -33,14 +33,17 @@ def convert_hand_to_index(cards: list) -> str:
     return index
 
 
-def player_policy(cards: list, dealer: list, policy: pd.DataFrame) -> str:
+def player_policy(cards: list, dealer: int, policy: pd.DataFrame) -> str:
 
-    if dealer[0] == 1:
+    if dealer == 1:
         dealer_str = 'A'
     else:
-        dealer_str = str(dealer[0])
+        dealer_str = str(dealer)
     index = convert_hand_to_index(cards)
     try:
-        return policy.loc[index, dealer_str]
+        pol = policy.loc[index, dealer_str]
+        if len(cards) > 2 and pol == 'D':
+            return 'H'
+        return pol
     except BaseException:
         print(cards)

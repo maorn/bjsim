@@ -7,4 +7,4 @@ def test_game():
     dealer = [3]
     bet = 50
     deck = BjDeck(6)
-    a = play_hand(player, dealer, deck, bet)
+    a = play_hand(player, dealer[0], deck, bet)
