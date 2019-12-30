@@ -4,7 +4,7 @@ Created on Oct 10, 2019
 @author: maor
 '''
 from bjsim.common.cards import count_hand, BjDeck
-from bjsim.common.player import player_policy
+from bjsim.common.policies import fixed_policy, policy_selector
 from bjsim.common.globals import WEB_POLICY
 
 
@@ -49,7 +49,7 @@ class OneHand:
             self.actions.append({'hand': self.cards.copy(), 'dealer': dealer, 'action': action})
 
 
-def init_game(number_of_players: int, deck: BjDeck)-> tuple:
+def init_game(number_of_players: int, deck: BjDeck) -> tuple:
     players = []
     for _ in range(number_of_players):
         players.append([deck.deal()])
@@ -67,7 +67,7 @@ def dealer_hand(cards: list, deck: BjDeck) -> list:
     return cards
 
 
-def rewards(final_hands: list, d_cards: list)-> list:
+def rewards(final_hands: list, d_cards: list) -> list:
     try:
         ret = []
         d_hand = count_hand(d_cards)
@@ -99,21 +99,23 @@ def rewards(final_hands: list, d_cards: list)-> list:
         print(1)
 
 
-def play_double(hand: list, bet: float, deck: BjDeck, dealer: int)-> OneHand:
+def play_double(hand: list, bet: float,
+                deck: BjDeck, dealer: int) -> OneHand:
     curr_hand = OneHand(hand, bet * 2, dealer, 'D')
     curr_hand.hit(deck)
     return curr_hand
 
 
-def play_hit(hand: list, bet: float, dealer: int, deck: BjDeck) -> OneHand:
+def play_hit(hand: list, bet: float, dealer: int,
+             deck: BjDeck, policy_func, **policy_params) -> OneHand:
     curr_hand = OneHand(hand, bet, dealer, 'H')
-    action = player_policy(curr_hand.cards, dealer, WEB_POLICY)
+    action = policy_selector(policy_func, cards=curr_hand.cards, **policy_params)
     while action != 'S':
         curr_hand.hit(deck)
         if curr_hand.count > 21:
             break
         else:
-            action = player_policy(curr_hand.cards, dealer, WEB_POLICY)
+            action = policy_selector(fixed_policy, cards=curr_hand.cards, **policy_params)
             curr_hand.add_action(dealer, action)
     return curr_hand
 
@@ -122,7 +124,7 @@ def add_split_action(cur_hand: int, dealer: int):
     cur_hand.add_action(dealer, 'Y', [cur_hand.cards[0], cur_hand.cards[0]])
 
 
-def play_split(hand: list, bet: int, dealer: int, deck: BjDeck):
+def play_split(hand: list, bet: int, dealer: int, deck: BjDeck, policy_func, **policy_params):
     final_hand = []
     # ace means split and one card only.
     if hand[0] == 1:
@@ -134,7 +136,7 @@ def play_split(hand: list, bet: int, dealer: int, deck: BjDeck):
         return final_hand
     while hand:
         curr_hand = [hand.pop(), deck.deal()]
-        action = player_policy(curr_hand, dealer, WEB_POLICY)
+        action = policy_selector(policy_func, cards=curr_hand, **policy_params)
         if action == 'S':
             cur_hand = OneHand(curr_hand, bet, dealer, action)
             add_split_action(cur_hand, dealer)
@@ -147,7 +149,7 @@ def play_split(hand: list, bet: int, dealer: int, deck: BjDeck):
             hand.append(curr_hand.pop())
             hand.append(curr_hand.pop())
         elif action == 'H':
-            hand_h = play_hit(curr_hand, bet, dealer, deck)
+            hand_h = play_hit(curr_hand, bet, dealer, deck, policy_func, **policy_params)
             add_split_action(hand_h, dealer)
             final_hand.append(hand_h)
         else:
@@ -155,20 +157,21 @@ def play_split(hand: list, bet: int, dealer: int, deck: BjDeck):
     return final_hand
 
 
-def play_hand(hand: list, dealer: int, deck: BjDeck, bet: float)-> tuple:
-    action = player_policy(hand, dealer, WEB_POLICY)
+def play_hand(hand: list, dealer: int, deck: BjDeck,
+              bet: float, policy_func, **policy_params) -> tuple:
+    action = policy_selector(policy_func, cards=hand, **policy_params)
     if action == 'S':
         curr_hand = OneHand(hand, bet, dealer, action)
         return [curr_hand]
     if action == 'D':
         return [play_double(hand, bet, deck, dealer)]
     if action == 'H':
-        return [play_hit(hand, bet, dealer, deck)]
+        return [play_hit(hand, bet, dealer, deck, policy_func, **policy_params)]
 
     if action == 'Y':
-        return play_split(hand, bet, dealer, deck)
-
-    raise("no action to perform")
+        return play_split(hand, bet, dealer, deck, policy_func, **policy_params)
+    print("no action to perform")
+    raise
 
 
 def play_game(deck, bets):
@@ -176,7 +179,8 @@ def play_game(deck, bets):
     players, dealer = init_game(len(bets), deck)
     final_hand = []
     for player, bet in zip(players, bets):
-        curr_hand = play_hand(player, dealer[0], deck, bet)
+        policy_params = {'dealer_card': dealer[0], 'policy': WEB_POLICY}
+        curr_hand = play_hand(player, dealer[0], deck, bet, fixed_policy, **policy_params)
         final_hand.extend(curr_hand)
     d_hand = dealer_hand(dealer, deck)
     return final_hand, d_hand, rewards(final_hand, d_hand)

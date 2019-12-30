@@ -6,10 +6,11 @@ Created on Oct 8, 2019
 import pandas as pd
 from bjsim.common.cards import BjDeck, count_hand
 from bjsim.common.game import dealer_hand, play_hand, rewards
-from bjsim.common.player import convert_hand_to_index
+from bjsim.common.policies import convert_hand_to_index, fixed_policy
+from bjsim.common.globals import WEB_POLICY
 
 
-def get_percents(old_row: dict)-> dict:
+def get_percents(old_row: dict) -> dict:
     row = old_row.copy()
     row['win'] = row['win'] / row['total']
     row['lost'] = row['lost'] / row['total']
@@ -53,7 +54,7 @@ def fill_stats(hand: list, hand_index: str, p_stats: dict):
         p_stats[hand_index][count] = 1
 
 
-def player_stats(games: int=1000000, decks: int=6)-> tuple:
+def player_stats(games: int=1000000, decks: int=6) -> tuple:
     p_stats = {}
     deck = BjDeck(decks)
     for _ in range(games):
@@ -62,7 +63,8 @@ def player_stats(games: int=1000000, decks: int=6)-> tuple:
         dealer = [deck.deal()]
         hand.append(deck.deal())
         hand_index = convert_hand_to_index(hand)
-        curr_hand = play_hand(hand, dealer[0], deck, 1)
+        policy_params = {'dealer_card': dealer[0], 'policy': WEB_POLICY}
+        curr_hand = play_hand(hand, dealer[0], deck, 1, fixed_policy, **policy_params)
         for hand in curr_hand:
             fill_stats(hand, hand_index, p_stats)
 
@@ -73,7 +75,7 @@ def player_stats(games: int=1000000, decks: int=6)-> tuple:
     return raw_count, total
 
 
-def player_win_rates_for_start_hands(games: int=1000000, decks: int=6)-> tuple:
+def player_win_rates_for_start_hands(games: int=1000000, decks: int=6) -> tuple:
     player_stats = {}
     deck = BjDeck(decks)
     for _ in range(games):

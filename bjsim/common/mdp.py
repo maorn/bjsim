@@ -9,7 +9,7 @@ def build_states():
     hsd = ['H', 'S', 'D']
     hsdy = ['H', 'S', 'D', 'Y']
     actions = {'21': ['S'], 'A,10': ['S']}
-    for i in range(5, 20):
+    for i in range(20, 5, -1):
         actions[str(i)] = hsd
     for strt in ['A,2', 'A,3', 'A,4', 'A,5', 'A,6', 'A,7', 'A,8', 'A,9']:
         actions[strt] = hsd
@@ -35,3 +35,10 @@ def init_counters(actions: dict):
         for item in val:
             actions_couters[key][item] = {'count': 0, 'reward': 0}
     return actions_couters
+
+
+def start_game():
+    actions = build_states()
+    actions_probs = init_probs(actions)
+    actions_counter = init_counters(actions)
+    return actions, actions_probs, actions_counter

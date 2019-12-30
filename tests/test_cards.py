@@ -5,7 +5,7 @@ Created on Oct 8, 2019
 '''
 from bjsim.common.cards import count_hand, BjDeck
 from bjsim.common.game import play_game
-from bjsim.common.player import convert_hand_to_index, player_policy
+from bjsim.common.policies import convert_hand_to_index, fixed_policy
 from bjsim.common.globals import WEB_POLICY
 
 
@@ -18,7 +18,7 @@ def test_counts():
 
 
 def test_policy():
-    policy = player_policy([4, 2, 4], 6, WEB_POLICY)
+    policy = fixed_policy([4, 2, 4], 6, WEB_POLICY)
     assert policy == 'H'
 
 
