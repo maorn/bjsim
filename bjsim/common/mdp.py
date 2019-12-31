@@ -27,8 +27,9 @@ class MDP:
         for key, val in self.actions.items():
             actions_couters[key] = {}
             for item in val:
-                # making the start different from zero
-                actions_couters[key][item] = {'count': 0.0001, 'reward': 0.0001}
+                # making the start different from zero and if we didn't reach there we
+                # will put low probability
+                actions_couters[key][item] = {'count': 0.0001, 'reward': 0.001}
         return actions_couters
 
     def add_game(self, final_hand, reward):
@@ -44,6 +45,8 @@ class MDP:
     def update_probs(self):
         for key, val in self.actions.items():
             norm_factor = 0
+            if key == '20':
+                print(11)
             for item in val:
                 curr = self.actions_couters[key][item]
                 curr['avg'] = curr['reward'] / curr['count']

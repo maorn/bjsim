@@ -47,7 +47,7 @@ def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame, **_) -> st
     index = convert_hand_to_index(cards)
     try:
         pol = policy.loc[index, dealer_str]
-        if len(cards) > 2 and pol == 'D':
+        if len(cards) > 2 and (pol == 'D' or pol == 'Y'):
             return 'H'
         return pol
     except BaseException:
@@ -57,13 +57,19 @@ def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame, **_) -> st
 def random_policy(cards: str, actions: dict, **_)->str:
     idx = convert_hand_to_index(cards)
     rand_call = random.randint(1, len(actions[idx]))
+    action = actions[idx][rand_call - 1]
+    if len(cards) > 2 and (action == 'D' or action == 'Y'):
+        return 'H'
     return actions[idx][rand_call - 1]
 
 
 def max_policy(cards: str, actions: dict, actions_prob: dict, **_)->str:
     idx = convert_hand_to_index(cards)
     prob_values = actions_prob[idx].values()
-    return actions[idx][list(prob_values).index(max(prob_values))]
+    action = actions[idx][list(prob_values).index(max(prob_values))]
+    if len(cards) > 2 and (action == 'D' or action == 'Y'):
+        return 'H'
+    return action
 
 
 def probability_based_policy(cards: str, threshold: int, **params)->str:
