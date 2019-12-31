@@ -63,21 +63,21 @@ def random_policy(cards: str, actions: dict, **_)->str:
     return actions[idx][rand_call - 1]
 
 
-def max_policy(cards: str, actions: dict, actions_prob: dict, **_)->str:
+def max_policy(cards: str, actions: dict, actions_prob: dict, dealer_card: int, **_)->str:
     idx = convert_hand_to_index(cards)
-    prob_values = actions_prob[idx].values()
+    prob_values = actions_prob[dealer_card][idx].values()
     action = actions[idx][list(prob_values).index(max(prob_values))]
     if len(cards) > 2 and (action == 'D' or action == 'Y'):
         return 'H'
     return action
 
 
-def probability_based_policy(cards: str, threshold: int, **params)->str:
+def probability_based_policy(cards: str, threshold: int, dealer_card: int, **params)->str:
     """
     100 - threshold chance to take random policy
     threshold change to take max_policy
     """
     randint = random.randint(1, 100)
     if randint < threshold:
-        return max_policy(cards, **params)
+        return max_policy(cards, dealer_card=dealer_card, **params)
     return random_policy(cards, **params)
