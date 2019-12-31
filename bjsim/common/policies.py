@@ -38,7 +38,7 @@ def convert_hand_to_index(cards: list) -> str:
     return index
 
 
-def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame) -> str:
+def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame, **_) -> str:
 
     if dealer_card == 1:
         dealer_str = 'A'
@@ -54,7 +54,23 @@ def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame) -> str:
         print(cards)
 
 
-def random_policy(cards: str, actions: dict, **params)->str:
+def random_policy(cards: str, actions: dict, **_)->str:
     idx = convert_hand_to_index(cards)
     rand_call = random.randint(1, len(actions[idx]))
     return actions[idx][rand_call - 1]
+
+
+def max_policy(cards: str, actions: dict, actions_prob: dict, **_)->str:
+    idx = convert_hand_to_index(cards)
+    return actions[idx][max(actions_prob[idx])]
+
+
+def probability_based_policy(cards: str, threshold: int, **params)->str:
+    """
+    100 - threshold chance to take random policy
+    threshold change to take max_policy
+    """
+    randint = random.randint(1, 100)
+    if randint < threshold:
+        return max_policy(cards, **params)
+    return random_policy(cards, **params)
