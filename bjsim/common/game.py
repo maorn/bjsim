@@ -4,7 +4,8 @@ Created on Oct 10, 2019
 @author: maor
 '''
 from bjsim.common.cards import count_hand, BjDeck
-from bjsim.common.policies import policy_selector
+from bjsim.common.policies import policy_selector, fixed_policy
+from bjsim.common.globals import WEB_POLICY
 
 
 class PlayerHand:
@@ -191,10 +192,12 @@ def main():
     start_money = 0
     end_money = start_money
     games = 10000
+    policy_params = {'policy': WEB_POLICY}
     for i in range(games):
         print(i)
         b.start_game()
-        final_hand, d_hand, return_money = play_game(b, [100, 100, 100, 100, 100, 100])
+        final_hand, d_hand, return_money = play_game(
+            b, [100, 100, 100, 100, 100, 100], fixed_policy, **policy_params)
         if final_hand is None or return_money is None:
             print(2)
         if len(final_hand) < 3 or len(return_money) < 3:

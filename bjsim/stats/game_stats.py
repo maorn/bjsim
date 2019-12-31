@@ -78,6 +78,7 @@ def player_stats(games: int=1000000, decks: int=6) -> tuple:
 def player_win_rates_for_start_hands(games: int=1000000, decks: int=6) -> tuple:
     player_stats = {}
     deck = BjDeck(decks)
+    policy_params = {'policy': WEB_POLICY}
     for _ in range(games):
         deck.start_game()
         hand = [deck.deal()]
@@ -85,7 +86,8 @@ def player_win_rates_for_start_hands(games: int=1000000, decks: int=6) -> tuple:
         dealer_index = str(dealer[0])
         hand.append(deck.deal())
         hand_index = convert_hand_to_index(hand)
-        curr_hand = play_hand(hand, dealer[0], deck, 1)
+        policy_params['dealer_card'] = dealer[0]
+        curr_hand = play_hand(hand, dealer[0], deck, 1, fixed_policy, **policy_params)
         d_cards = dealer_hand(dealer, deck)
         results = rewards(curr_hand, d_cards)
         for result in results:
