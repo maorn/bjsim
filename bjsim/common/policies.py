@@ -62,7 +62,8 @@ def random_policy(cards: str, actions: dict, **_)->str:
 
 def max_policy(cards: str, actions: dict, actions_prob: dict, **_)->str:
     idx = convert_hand_to_index(cards)
-    return actions[idx][max(actions_prob[idx])]
+    prob_values = actions_prob[idx].values()
+    return actions[idx][list(prob_values).index(max(prob_values))]
 
 
 def probability_based_policy(cards: str, threshold: int, **params)->str:

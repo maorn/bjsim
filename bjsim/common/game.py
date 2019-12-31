@@ -199,9 +199,9 @@ def main():
         final_hand, d_hand, return_money = play_game(
             b, [100, 100, 100, 100, 100, 100], fixed_policy, **policy_params)
         if final_hand is None or return_money is None:
-            print(2)
+            print("bad input")
         if len(final_hand) < 3 or len(return_money) < 3:
-            print(1)
+            print("bad input sum")
         for hand in final_hand:
             print(hand.cards)
         print("dealer", d_hand)
