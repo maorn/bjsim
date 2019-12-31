@@ -39,7 +39,7 @@ class MDP:
             self.actions_couters[idx][act]['count'] = self.actions_couters[idx][act]['count'] + 1
             # count only good moves, the bad moves just counted
             if reward > 0:
-                self.actions_couters[idx][act]['reward'] = self.actions_couters[idx][act]['reward'] + reward
+                self.actions_couters[idx][act]['reward'] = self.actions_couters[idx][act]['reward'] + 1
         return
 
     def update_probs(self):
