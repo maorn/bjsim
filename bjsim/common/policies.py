@@ -54,6 +54,7 @@ def fixed_policy(cards: list, dealer_card: int, policy: pd.DataFrame) -> str:
         print(cards)
 
 
-def random_policy(cards: str,  actions: dict)->str:
-    rand_call = random.randint(1, len(actions[cards[0]]))
-    return actions[cards[0]][rand_call - 1]
+def random_policy(cards: str, actions: dict, **params)->str:
+    idx = convert_hand_to_index(cards)
+    rand_call = random.randint(1, len(actions[idx]))
+    return actions[idx][rand_call - 1]

@@ -24,7 +24,8 @@ def test_policy():
 
 def test_game():
     b = BjDeck(6)
-    a, b, c = play_game(b, [100])
+    policy_params = {'policy': WEB_POLICY}
+    a, b, c = play_game(b, [100], fixed_policy, **policy_params)
     print(a, b, c)
 
 

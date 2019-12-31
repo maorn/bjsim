@@ -4,8 +4,7 @@ Created on Oct 10, 2019
 @author: maor
 '''
 from bjsim.common.cards import count_hand, BjDeck
-from bjsim.common.policies import fixed_policy, policy_selector
-from bjsim.common.globals import WEB_POLICY
+from bjsim.common.policies import policy_selector
 
 
 class PlayerHand:
@@ -115,7 +114,7 @@ def play_hit(hand: list, bet: float, dealer: int,
         if curr_hand.count > 21:
             break
         else:
-            action = policy_selector(fixed_policy, cards=curr_hand.cards, **policy_params)
+            action = policy_selector(policy_func, cards=curr_hand.cards, **policy_params)
             curr_hand.add_action(dealer, action)
     return curr_hand
 
@@ -174,13 +173,14 @@ def play_hand(hand: list, dealer: int, deck: BjDeck,
     raise
 
 
-def play_game(deck, bets):
+def play_game(deck, bets, policy_func, **policy_params):
     # deal first card for everyone:
     players, dealer = init_game(len(bets), deck)
+    policy_params['dealer_card'] = dealer[0]
     final_hand = []
+
     for player, bet in zip(players, bets):
-        policy_params = {'dealer_card': dealer[0], 'policy': WEB_POLICY}
-        curr_hand = play_hand(player, dealer[0], deck, bet, fixed_policy, **policy_params)
+        curr_hand = play_hand(player, dealer[0], deck, bet, policy_func, **policy_params)
         final_hand.extend(curr_hand)
     d_hand = dealer_hand(dealer, deck)
     return final_hand, d_hand, rewards(final_hand, d_hand)
